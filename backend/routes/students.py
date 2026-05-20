@@ -6,7 +6,7 @@ from models.schemas import StudentRead, StudentLogin, ErrorResponse, ConvertLead
 from services.student_service import authenticate_student, get_student, get_students_by_school, convert_lead_to_student, update_student_password, deactivate_student, verify_password
 from services.school_service import get_school_admin, get_school
 from config.database import get_supabase_client
-from main import limiter
+from utils.rate_limit import limiter
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/student", tags=["Students"])

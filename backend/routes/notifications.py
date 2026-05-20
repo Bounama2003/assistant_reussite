@@ -5,7 +5,7 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Header, Request
 from pydantic import BaseModel
-from main import limiter
+from utils.rate_limit import limiter
 
 from services.push_service import subscribe, unsubscribe, send_to_user, _get_vapid_public_key
 

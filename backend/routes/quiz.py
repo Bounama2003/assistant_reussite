@@ -9,7 +9,7 @@ from models.schemas import (
 )
 from services.quiz_service import quiz_service
 from services.school_service import get_school
-from main import limiter
+from utils.rate_limit import limiter
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/quiz", tags=["Quiz"])

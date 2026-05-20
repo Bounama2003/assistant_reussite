@@ -6,7 +6,7 @@ from fastapi.responses import StreamingResponse
 from models.schemas import ChatRequest, ChatResponse, Source, ErrorResponse
 from rag.engine import query_rag, query_rag_stream
 from services.school_service import get_school
-from main import limiter
+from utils.rate_limit import limiter
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["Chat"])

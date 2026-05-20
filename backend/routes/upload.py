@@ -2,7 +2,7 @@ import logging
 import os
 import tempfile
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Header, Request
-from main import limiter
+from utils.rate_limit import limiter
 
 from models.schemas import UploadResponse, ErrorResponse
 from rag.engine import ingest_pdf

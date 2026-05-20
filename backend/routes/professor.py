@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header, HTTPException, Query, Request
 from typing import Optional
 from pydantic import BaseModel
-from main import limiter
+from utils.rate_limit import limiter
 from models.schemas import (
     ProfessorCreate, ProfessorLogin, ProfessorKeyLogin, ProfessorKeyResponse,
     ProfessorRead, ReactionCreate, ReactionRead,

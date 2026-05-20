@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Header, Request
 from models.schemas import LeadCreate, LeadRead, ErrorResponse
 from services.lead_service import create_lead, get_leads_by_school, delete_lead
 from services.school_service import get_school_admin, get_school
-from main import limiter
+from utils.rate_limit import limiter
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Leads"])

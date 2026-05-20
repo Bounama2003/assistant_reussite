@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, Header, Query, Request
 from models.schemas import SchoolCreate, SchoolUpdate, SchoolAdminRead, ErrorResponse
-from main import limiter
+from utils.rate_limit import limiter
 from services.school_service import (
     get_all_schools_admin,
     get_school_admin,
