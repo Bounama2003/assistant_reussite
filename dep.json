@@ -1,0 +1,418 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
+  "agents": {
+    "sisyphus": {
+      "model": "opencode/minimax-m2.5-free",
+      "variant": "max",
+      "fallback_models": [
+        {
+          "model": "opencode/nemotron-3-super-free",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/big-pickle"
+        },
+        {
+          "model": "openrouter/free-models-router",
+          "variant": "medium"
+        },
+        {
+          "model": "openrouter/lmf2.5-1.2b-instruct-free",
+          "variant": "medium"
+        },
+        {
+          "model": "openrouter/glm-4.5-air-free"
+        },
+        {
+          "model": "opencode/glm-5"
+        },
+        {
+          "model": "openrouter/elephant-free"
+        }
+      ]
+    },
+    "hephaestus": {
+      "model": "openrouter/gpt-oss-20b-free",
+      "variant": "medium",
+      "fallback_models": [
+        {
+          "model": "openrouter/gpt-120b-free",
+          "variant": "medium"
+        }
+      ]
+    },
+    "oracle": {
+      "model": "google/gemini-3-flash-preview",
+      "variant": "high",
+      "fallback_models": [
+        {
+          "model": "opencode/gpt-5.4",
+          "variant": "high"
+        },
+        {
+          "model": "google/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "github-copilot/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        },
+        {
+          "model": "github-copilot/claude-opus-4.7",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/claude-opus-4-7",
+          "variant": "max"
+        }
+      ]
+    },
+    "librarian": {
+      "model": "openrouter/glm-4.5-air-free",
+      "fallback_models": [
+        {
+          "model": "openrouter/gemma-3-4b-free"
+        },
+        {
+          "model": "openrouter/uncensored-free"
+        }
+      ]
+    },
+    "explore": {
+      "model": "openrouter/gemma-4-31b-free",
+      "fallback_models": [
+        {
+          "model": "openrouter/gemma-3n-4b-free"
+        }
+      ]
+    },
+    "multimodal-looker": {
+      "model": "openrouter/nemotron-3-super-free",
+      "variant": "medium",
+      "fallback_models": [
+        {
+          "model": "opencode/minimax-m2.5-free"
+        },
+        {
+          "model": "openrouter/gemma-4-26b-a4b-free"
+        },
+        {
+          "model": "openrouter/nemotron-nano-9b-v2-free"
+        }
+      ]
+    },
+    "prometheus": {
+      "model": "openrouter/lmf2.5-1.2b-thinking-free",
+      "variant": "max",
+      "fallback_models": [
+        {
+          "model": "openrouter/nemotron-3-nano-omni-free",
+          "variant": "max"
+        },
+        {
+          "model": "github-copilot/gpt-5.4",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gpt-5.4",
+          "variant": "high"
+        },
+        {
+          "model": "google/gemini-3.1-pro-preview"
+        },
+        {
+          "model": "github-copilot/gemini-3.1-pro-preview"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro"
+        }
+      ]
+    },
+    "metis": {
+      "model": "openrouter/llama-3.2-3b-instruct-free",
+      "variant": "max",
+      "fallback_models": [
+        {
+          "model": "openrouter/hermes-3-405b-instruct-free",
+          "variant": "max"
+        },
+        {
+          "model": "github-copilot/gpt-5.4",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gpt-5.4",
+          "variant": "high"
+        }
+      ]
+    },
+    "momus": {
+      "model": "openrouter/llama-3.3-70b-instruct-free",
+      "variant": "xhigh",
+      "fallback_models": [
+        {
+          "model": "openrouter/gpt-oss-120b-free",
+          "variant": "xhigh"
+        },
+        {
+          "model": "openrouter/gpt-oss-20b-free",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/claude-opus-4-7",
+          "variant": "max"
+        },
+        {
+          "model": "google/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "github-copilot/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        }
+      ]
+    },
+    "atlas": {
+      "model": "opencode/big-pickle",
+      "fallback_models": [
+        {
+          "model": "openrouter/nemotron-nano-12b-v2-free"
+        },
+        {
+          "model": "opencode/minimax-m2.5-free",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/gpt-5.4",
+          "variant": "medium"
+        }
+      ]
+    },
+    "sisyphus-junior": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "fallback_models": [
+        {
+          "model": "opencode/claude-sonnet-4-6"
+        },
+        {
+          "model": "github-copilot/gpt-5.4",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/gpt-5.4",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/big-pickle"
+        }
+      ]
+    }
+  },
+  "categories": {
+    "visual-engineering": {
+      "model": "google/claude-opus-4.6-thinking-antigravity",
+      "variant": "high",
+      "fallback_models": [
+        {
+          "model": "google/claude-sonnet-4.6-antigravity",
+          "variant": "high"
+        },
+        {
+          "model": "openrouter/gemma-3-4b-free",
+          "variant": "high"
+        },
+        {
+          "model": "openrouter/glm-4.5-air-free"
+        },
+        {
+          "model": "opencode/glm-5"
+        },
+        {
+          "model": "github-copilot/claude-opus-4.7",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/claude-opus-4-7",
+          "variant": "max"
+        }
+      ]
+    },
+    "ultrabrain": {
+      "model": "opencode/minimax-m2.5-free",
+      "variant": "xhigh",
+      "fallback_models": [
+        {
+          "model": "openrouter/gpt-oss-120b-free",
+          "variant": "high"
+        },
+        {
+          "model": "google/gemini-3.1-pro-preview-antigravity",
+          "variant": "high"
+        },
+        {
+          "model": "google/gemini-flash-antigravity",
+          "variant": "high"
+        },
+        {
+          "model": "github-copilot/claude-opus-4.7",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/claude-opus-4-7",
+          "variant": "max"
+        }
+      ]
+    },
+    "deep": {
+      "model": "openrouter/gpt-oss-20b-free",
+      "variant": "medium",
+      "fallback_models": [
+        {
+          "model": "openrouter/nemotron-3-nano-omni-free",
+          "variant": "medium"
+        },
+        {
+          "model": "github-copilot/claude-opus-4.7",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/claude-opus-4-7",
+          "variant": "max"
+        },
+        {
+          "model": "google/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "github-copilot/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        }
+      ]
+    },
+    "artistry": {
+      "model": "google/gemini-3.1-pro-preview",
+      "variant": "high",
+      "fallback_models": [
+        {
+          "model": "github-copilot/gemini-3.1-pro-preview",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        },
+        {
+          "model": "github-copilot/claude-opus-4.7",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/claude-opus-4-7",
+          "variant": "max"
+        },
+        {
+          "model": "github-copilot/gpt-5.4"
+        },
+        {
+          "model": "opencode/gpt-5.4"
+        }
+      ]
+    },
+    "quick": {
+      "model": "openrouter/llama-3.2-3b-instruct-free",
+      "fallback_models": [
+        {
+          "model": "openrouter/hermes-3-405b-instruct-free"
+        },
+        {
+          "model": "github-copilot/claude-haiku-4.5"
+        },
+        {
+          "model": "opencode/claude-haiku-4-5"
+        },
+        {
+          "model": "google/gemini-3-flash-preview"
+        },
+        {
+          "model": "github-copilot/gemini-3-flash-preview"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        },
+        {
+          "model": "opencode/gpt-5-nano"
+        }
+      ]
+    },
+    "unspecified-low": {
+      "model": "openrouter/minimax-m2.5-free",
+      "fallback_models": [
+        {
+          "model": "opencode/nemotron-3-super-free"
+        },
+        {
+          "model": "opencode/gpt-5.3-codex",
+          "variant": "medium"
+        },
+        {
+          "model": "google/gemini-3-flash-preview"
+        },
+        {
+          "model": "github-copilot/gemini-3-flash-preview"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        }
+      ]
+    },
+    "unspecified-high": {
+      "model": "opencode/minimax-m2.5-free",
+      "fallback_models": [
+        {
+          "model": "opencode/big-pickle"
+        },
+        {
+          "model": "opencode/gpt-5.3-codex",
+          "variant": "medium"
+        },
+        {
+          "model": "google/gemini-3-flash-preview"
+        },
+        {
+          "model": "github-copilot/gemini-3-flash-preview"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        }
+      ]
+    },
+    "writing": {
+      "model": "openrouter/lmf2.5-1.2b-thinking-free",
+      "fallback_models": [
+        {
+          "model": "openrouter/gemma-4-26b-a4b-free"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        },
+        {
+          "model": "github-copilot/claude-sonnet-4.6"
+        },
+        {
+          "model": "opencode/claude-sonnet-4-6"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = false
+disallow_any_unimported = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+    "supabase.*",
+    "rag.engine",
+    "sentry_sdk.*",
+    "slowapi.*",
+    "pywebpush.*",
+    "bcrypt.*",
+]
+ignore_missing_imports = true

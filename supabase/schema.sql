@@ -1,0 +1,11 @@
+-- ============================================
+-- ⚠️  ATTENTION — FICHIER DÉPRÉCIÉ  ⚠️
+-- ============================================
+-- Ce fichier est DANGEREUX et NE DOIT PAS être exécuté.
+--
+-- Problème : il utilise vector(1536) mais notre modèle
+-- d'embedding est BAAI/bge-small-en-v1.5 (384 dimensions).
+-- Exécuter ce fichier corrompra la base de données.
+--
+-- Utilisez plutôt : supabase/clean_migration.sql
+-- ============================================

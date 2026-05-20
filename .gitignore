@@ -1,0 +1,64 @@
+assets/external/
+.states
+.web
+*.db
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+*.pyc
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Environment
+.env
+.env.local
+.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/
+
+# Logs
+*.log
+logs/
+prompt.md
+AGENTS.md
+APP_STATUS.md
+tmp/
+# Uploads temporaires
+uploads/
+*.pdf
+
+# Skills
+skills/
+
+# OpenCode
+.opencode/
+
+# Frontend build
+frontend/dist/
+frontend/node_modules/
+frontend/dev-dist/
+
+# PWA icons (generated from SVG at build time)
+frontend/public/icons/
+accueil_eleve.png
