@@ -70,3 +70,27 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+  deploy:
+    name: Deploy to HF Spaces
+    needs: [backend, frontend]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to HF Spaces
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            API_REPO="data-rag/assistant-reussite-api"
+            UI_REPO="data-rag/assistant-reussite.ai"
+          else
+            API_REPO="data-rag/assistant-reussite-api-dev"
+            UI_REPO="data-rag/assistant-reussite-dev-ui"
+          fi
+
+          git remote add hf-api "https://data-rag:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${API_REPO}"
+          git remote add hf-ui "https://data-rag:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${UI_REPO}"
+
+          git push hf-api HEAD:main --force
+          git push hf-ui HEAD:main --force
