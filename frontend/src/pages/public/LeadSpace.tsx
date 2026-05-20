@@ -104,7 +104,7 @@ export default function LeadSpace() {
       api.get(`/school/${schoolId}/levels`).catch(() => ({ data: [] })),
     ]).then(([schoolRes, levelsRes]) => {
       setSchool(schoolRes.data);
-      setLevels(levelsRes.data || []);
+      setLevels(Array.isArray(levelsRes.data) ? levelsRes.data : []);
       setLoading(false);
     }).catch(() => {
       setError('École introuvable. Vérifiez le nom et réessayez.');
@@ -270,7 +270,7 @@ export default function LeadSpace() {
               ) : (
                 <>
                   <div className="flex items-center mb-8">
-                    {steps.map((s, i) => (
+                    {Array.isArray(steps) && steps.map((s, i) => (
                       <div key={i} className="flex items-center flex-1 last:flex-none">
                         <div className="flex items-center gap-2">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
@@ -311,7 +311,7 @@ export default function LeadSpace() {
                           <select value={serie} onChange={(e) => setSerie(e.target.value)}
                             className="w-full bg-[#1e293b]/60 text-white rounded-xl px-4 py-3.5 mt-1.5 text-sm border border-white/5 focus:outline-none focus:border-[#11caa0] focus:bg-[#1e293b] transition-all">
                             <option value="" className="bg-[#0f172a]">Sélectionnez votre niveau...</option>
-                            {levels.map((l) => (
+                            {Array.isArray(levels) && levels.map((l) => (
                               <option key={l.id} value={l.nom_niveau} className="bg-[#0f172a]">{l.nom_niveau}</option>
                             ))}
                           </select>
@@ -406,7 +406,7 @@ export default function LeadSpace() {
                   </div>
                 )}
 
-                {messages.map((msg, i) => (
+                {Array.isArray(messages) && messages.map((msg, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, y: 10 }}
@@ -442,18 +442,18 @@ export default function LeadSpace() {
                 <div ref={chatEndRef} />
               </div>
 
-              {sources.length > 0 && (
+              {Array.isArray(sources) && sources.length > 0 && (
                 <div className="mb-3">
                   <button
                     onClick={() => setShowSources(!showSources)}
                     className="text-xs text-emeraude-400 hover:text-emeraude-300 flex items-center gap-1"
                   >
                     <BookOpen size={12} />
-                    {showSources ? 'Masquer' : 'Voir'} les sources ({sources.length})
+                    {showSources ? 'Masquer' : 'Voir'} les sources ({(Array.isArray(sources) ? sources.length : 0)})
                   </button>
                   {showSources && (
                     <div className="mt-2 space-y-2">
-                      {sources.map((s, i) => (
+                      {Array.isArray(sources) && sources.map((s, i) => (
                         <div key={i} className="text-xs text-nuit-300 glass-light rounded-lg p-2">
                           <p className="truncate">{s.content}</p>
                           {s.score && <span className="text-emeraude-400">Score: {(s.score * 100).toFixed(0)}%</span>}
