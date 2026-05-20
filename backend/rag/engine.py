@@ -316,7 +316,7 @@ def query_rag(question: str, school_id: str, student_id: str | None = None, stud
         
         for i, node in enumerate(nodes):
             if node.metadata.get("public") == True:
-                final_nodes_with_scores.append({"node": node, "score": float(similarities[i])})
+                final_nodes_with_scores.append({"node": node, "score": float(similarities[i] or 0.0)})
         
         # Truncate to top 5
         final_nodes_with_scores = final_nodes_with_scores[:5]
@@ -351,11 +351,11 @@ def query_rag(question: str, school_id: str, student_id: str | None = None, stud
         # Merge candidates
         candidates = []
         for i, node in enumerate(nodes_class):
-            candidates.append({"node": node, "score": float(sim_class[i])})
+            candidates.append({"node": node, "score": float(sim_class[i] or 0.0)})
         
         for i, node in enumerate(nodes_public):
             if node.metadata.get("public") == True:
-                candidates.append({"node": node, "score": float(sim_public[i])})
+                candidates.append({"node": node, "score": float(sim_public[i] or 0.0)})
         
         # Deduplicate and sort
         seen_ids = set()
@@ -654,7 +654,7 @@ def query_rag_stream(
         similarities = result.similarities or [0.0] * len(nodes)
         for i, node in enumerate(nodes):
             if node.metadata.get("public") == True:
-                final_nodes_with_scores.append({"node": node, "score": float(similarities[i])})
+                final_nodes_with_scores.append({"node": node, "score": float(similarities[i] or 0.0)})
         final_nodes_with_scores = final_nodes_with_scores[:5]
     else:
         query_class = VectorStoreQuery(
@@ -682,10 +682,10 @@ def query_rag_stream(
 
         candidates = []
         for i, node in enumerate(nodes_class):
-            candidates.append({"node": node, "score": float(sim_class[i])})
+            candidates.append({"node": node, "score": float(sim_class[i] or 0.0)})
         for i, node in enumerate(nodes_public):
             if node.metadata.get("public") == True:
-                candidates.append({"node": node, "score": float(sim_public[i])})
+                candidates.append({"node": node, "score": float(sim_public[i] or 0.0)})
 
         seen_ids = set()
         candidates.sort(key=lambda x: x["score"], reverse=True)
