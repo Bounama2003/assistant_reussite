@@ -6,7 +6,7 @@ CREATE TABLE quiz_sessions (
     student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     school_id TEXT NOT NULL REFERENCES schools(id) ON DELETE CASCADE,
     title TEXT,
-    matière TEXT,
+    matiere TEXT,
     classe TEXT,
     total_questions INTEGER DEFAULT 0,
     answered_count INTEGER DEFAULT 0,
