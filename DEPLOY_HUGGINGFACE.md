@@ -111,7 +111,7 @@ Dans **Settings** > **Repository Secrets** — ajouter **toutes** ces variables 
 |--------|-------------|
 | `SUPABASE_URL` | URL Supabase |
 | `SUPABASE_SERVICE_KEY` | Clé service role |
-| `DATABASE_URL` | URL brute `postgresql://` |
+| `DATABASE_URL` | URL brute `postgresql://` — **IPv6 ⚠️ voir note plus bas** |
 | `GROQ_API_KEY` | Clé Groq |
 | `GROQ_MODEL` | `llama-3.3-70b-versatile` |
 | `VAPID_PUBLIC_KEY` | Clé publique VAPID |
@@ -263,6 +263,20 @@ Pour une démo rapide, un seul Space Docker sert backend + frontend ensemble :
 **Inconvénient** : pas de CDN, les fichiers statiques sont servis par le process Python.
 
 ---
+
+## ⚠️ Important : IPv6 et connexion à Supabase
+
+Hugging Face Spaces **ne supporte pas les connexions IPv6** sortantes.
+Or, la connexion directe à Supabase (`db.*.supabase.co:5432`) résout uniquement en IPv6.
+
+**Solution** : utiliser Supavisor en mode session (`aws-0-[REGION].pooler.supabase.com:5432`) qui supporte IPv4.
+
+**Format de l'URL :**
+```
+postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres
+```
+
+Trouvez `PROJECT_REF` et `REGION` dans **Supabase Dashboard → Project Settings → General**.
 
 ## Notes importantes
 
