@@ -216,7 +216,7 @@ export default function LeadSpace() {
     <div className="min-h-screen bg-nuit-900">
       {/* School Hero */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-emeraude-500/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-emeraude-500/10 via-transparent to-transparent pointer-events-none" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-10 sm:pb-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-6">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl glass flex items-center justify-center shrink-0">
@@ -241,8 +241,8 @@ export default function LeadSpace() {
               )}
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
-              <button onClick={() => navigate('/auth/student')} className="btn-secondary text-xs sm:text-sm py-2 flex-1 sm:flex-none">Élève</button>
-              <button onClick={() => navigate('/auth/professor')} className="btn-secondary text-xs sm:text-sm py-2 flex-1 sm:flex-none">Professeur</button>
+              <button onClick={() => navigate(`/auth/student?school=${schoolId}`)} className="btn-secondary text-xs sm:text-sm py-2 flex-1 sm:flex-none">Élève</button>
+              <button onClick={() => navigate(`/auth/professor?school=${schoolId}`)} className="btn-secondary text-xs sm:text-sm py-2 flex-1 sm:flex-none">Professeur</button>
             </div>
           </motion.div>
         </div>
