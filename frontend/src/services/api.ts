@@ -1,8 +1,14 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 
+declare global {
+  interface Window { __API_URL__?: string; }
+}
+
+const apiBaseURL = (typeof window !== 'undefined' && window.__API_URL__) || import.meta.env.VITE_API_URL || '';
+
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '',
+  baseURL: apiBaseURL,
   headers: {
     'Content-Type': 'application/json',
   },

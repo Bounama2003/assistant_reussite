@@ -44,6 +44,13 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _inject_config_into_html(self, html):
+        config_tag = b'<script src="/api-config.js"></script>'
+        head_end = html.find(b"</head>")
+        if head_end != -1:
+            return html[:head_end] + config_tag + b"\n" + html[head_end:]
+        return html
+
     def _serve_static_or_spa(self):
         path = self.path.lstrip("/").split("?")[0].split("#")[0]
         file_path = os.path.join(FRONTEND_DIR, path)
@@ -55,10 +62,31 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(400, "WebSocket not available")
             return
 
-        self.path = "/index.html"
-        return super().do_GET()
+        idx_path = os.path.join(FRONTEND_DIR, "index.html")
+        if os.path.exists(idx_path):
+            with open(idx_path, "rb") as f:
+                html = f.read()
+            html = self._inject_config_into_html(html)
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            self.wfile.write(html)
+        else:
+            self.send_error(404, "Not Found")
+
+    def _serve_api_config(self):
+        api_url = os.environ.get("VITE_API_URL", "")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/javascript")
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.end_headers()
+        self.wfile.write(f'window.__API_URL__={json.dumps(api_url)};'.encode("utf-8"))
 
     def do_GET(self):
+        if self.path == "/api-config.js":
+            self._serve_api_config()
+            return
         if self._is_api_path():
             self._send_json_error(502, "Backend non disponible — mode interface seule")
             return
