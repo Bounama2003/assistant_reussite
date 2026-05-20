@@ -88,7 +88,7 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/api-config.js":
             self._serve_api_config()
             return
-        if self._is_api_path():
+        if not os.environ.get("VITE_API_URL") and self._is_api_path():
             self._send_json_error(502, "Backend non disponible — mode interface seule")
             return
         self._serve_static_or_spa()
