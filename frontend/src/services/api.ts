@@ -37,8 +37,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
-      window.location.href = '/';
+      const auth = useAuthStore.getState();
+      // Only redirect to login if user WAS authenticated (session expired/invalidated).
+      // Login attempts (no active session) should just show the error on the form.
+      if (auth.role && (auth.studentId || auth.adminKey || auth.professorKey || auth.superAdminKey)) {
+        auth.logout();
+        window.location.href = '/';
+      }
     } else if (error.response?.status === 403) {
       const detail = error.response?.data?.detail || 'Accès non autorisé';
       console.error('Auth error:', detail);
