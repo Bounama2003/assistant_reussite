@@ -24,10 +24,20 @@ export default function AdminLogin() {
     setError(null);
     try {
       const schoolRes = await api.get(`/school/${form.school_id}`);
+      const schoolId = schoolRes.data.id || form.school_id;
+
+      // /stats/{id} validates X-Admin-Key and returns 403 on mismatch
+      await api.get(`/stats/${schoolId}`, {
+        headers: { 'X-Admin-Key': form.admin_key },
+      });
+
       setAdmin(form.admin_key, schoolRes.data);
       navigate('/admin/dashboard');
     } catch (err: any) {
-      setError(err.response?.status === 404 ? 'École introuvable' : 'Vérifiez vos identifiants');
+      const status = err.response?.status;
+      if (status === 404) setError('École introuvable');
+      else if (status === 403) setError('Clé admin invalide');
+      else setError('Vérifiez vos identifiants');
     } finally { setLoading(false); }
   };
 
