@@ -69,6 +69,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   max-width: 100vw;
   overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
 .glass {

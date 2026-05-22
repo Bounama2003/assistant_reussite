@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 h-16 glass border-b border-nuit-600/50 z-40 flex items-center justify-between px-4 sm:px-6 transition-all duration-300 left-0 right-0 ${sidebarOpen ? 'lg:left-[260px]' : 'lg:left-[72px]'}`}
+        className={`fixed top-0 h-16 glass border-b border-nuit-600/50 z-[70] flex items-center justify-between px-4 sm:px-6 transition-all duration-300 left-0 right-0 ${sidebarOpen ? 'lg:left-[260px]' : 'lg:left-[72px]'}`}
       >
         <div className="flex items-center gap-4">
           <button
