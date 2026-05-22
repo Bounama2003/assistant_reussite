@@ -125,7 +125,7 @@ export default function AdminStats() {
 
       {/* Charts row 2 */}
       <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-        <div className="glass rounded-xl p-4 sm:p-5">
+        <div className="glass rounded-xl p-4 sm:p-5 overflow-hidden">
           <h3 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4">Activité</h3>
           {messagesByDayData.length > 0 ? (
             <div className="w-full" style={{ minHeight: 180, height: 180 }}>
@@ -142,24 +142,24 @@ export default function AdminStats() {
           ) : <p className="text-xs text-nuit-300 text-center py-8">Aucune donnée</p>}
         </div>
 
-        <div className="glass rounded-xl p-4 sm:p-5">
+        <div className="glass rounded-xl p-4 sm:p-5 overflow-hidden">
           <h3 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emeraude-400" /> Heatmap
           </h3>
           {Object.keys(rawHeatmap).length > 0 ? (
             <>
-              <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'auto repeat(12, 1fr)', gap: '0.125rem', width: '520px', fontSize: '0.75rem' }}>
-                  <div className="text-nuit-400 px-1" />
-                  {heatmapHours.map((h) => (<div key={h} className="text-nuit-400 text-center">{h}</div>))}
+              <div className="overflow-x-auto">
+                <div style={{ display: 'grid', gridTemplateColumns: 'auto repeat(12, minmax(22px, 1fr))', gap: '0.125rem', minWidth: '280px', fontSize: '0.65rem' }}>
+                  <div className="text-nuit-400 px-0.5" />
+                  {heatmapHours.map((h) => (<div key={h} className="text-nuit-400 text-center text-[10px]">{h}</div>))}
                   {heatmapDays.map((day) => (
                     <>
-                      <div key={day} className="text-nuit-300 px-1 py-1">{day}</div>
+                      <div key={day} className="text-nuit-300 px-0.5 py-1 text-[10px]">{day}</div>
                       {heatmapHours.map((h) => {
                         const val = rawHeatmap[day]?.[h] || 0;
                         return (
-                          <div key={day + '-' + h} className="h-4 sm:h-5 rounded-sm flex items-center justify-center font-medium"
-                            style={{ fontSize: '10px', backgroundColor: val > 0 ? 'rgba(17,202,160,' + (0.1 + (val / maxHeat) * 0.9) + ')' : 'rgba(255,255,255,0.03)' }}
+                          <div key={day + '-' + h} className="h-3.5 sm:h-5 rounded-sm flex items-center justify-center"
+                            style={{ fontSize: '9px', backgroundColor: val > 0 ? 'rgba(17,202,160,' + (0.1 + (val / maxHeat) * 0.9) + ')' : 'rgba(255,255,255,0.03)' }}
                             title={day + ' ' + h + 'h: ' + val}>{val > 0 ? val : ''}</div>
                         );
                       })}
