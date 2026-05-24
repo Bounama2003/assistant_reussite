@@ -21,32 +21,41 @@ logger = logging.getLogger(__name__)
 VAPID_CLAIMS = {"sub": "mailto:notifications@assistant-reussite.app"}
 
 
-def _get_vapid_private_key() -> str:
-    """Return VAPID private key as base64url string (pywebpush/py_vapid format).
+def _load_vapid_private_key():
+    """Load the VAPID private key, accepting both hex-encoded DER and raw base64url formats."""
+    import base64
+    from cryptography.hazmat.primitives.serialization import load_der_private_key
+    from cryptography.hazmat.primitives.asymmetric import ec
 
-    settings.vapid_private_key is stored as raw base64url (standard VAPID
-    format from web-push-codelab). pywebpush/py_vapid accepts this format
-    natively, so we pass it through.
-    """
-    return settings.vapid_private_key
+    key = settings.vapid_private_key
+    # Try hex-encoded DER first (used in tests)
+    try:
+        der = bytes.fromhex(key)
+        return load_der_private_key(der, password=None)
+    except (ValueError, TypeError):
+        pass
+    # Fallback: raw base64url EC key (production format from web-push-codelab)
+    raw = base64.urlsafe_b64decode(key + "==")
+    private_value = int.from_bytes(raw, "big")
+    return ec.derive_private_key(private_value, ec.SECP256R1())
+
+
+def _get_vapid_private_key() -> str:
+    """Return VAPID private key as base64url string (pywebpush/py_vapid format)."""
+    import base64
+
+    pk = _load_vapid_private_key()
+    raw = pk.private_numbers().private_value.to_bytes(32, "big")
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
 
 
 def _get_vapid_public_key() -> str:
-    """Return VAPID public key as a raw base64url string (for the /notifications/public-key endpoint).
-
-    Derives the public key from the raw base64url-encoded EC private key
-    stored in settings.vapid_private_key.
-    """
+    """Return VAPID public key as a raw base64url string (for the /notifications/public-key endpoint)."""
     import base64
-    from cryptography.hazmat.primitives.asymmetric import ec
     from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-    raw_private = base64.urlsafe_b64decode(settings.vapid_private_key + "==")
-    private_key = ec.derive_private_key(
-        int.from_bytes(raw_private, "big"),
-        ec.SECP256R1(),
-    )
-    pub = private_key.public_key()
+    pk = _load_vapid_private_key()
+    pub = pk.public_key()
     raw = pub.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
     return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
 
