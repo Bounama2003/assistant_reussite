@@ -22,20 +22,31 @@ VAPID_CLAIMS = {"sub": "mailto:notifications@assistant-reussite.app"}
 
 
 def _get_vapid_private_key() -> str:
-    """Return VAPID private key as base64url-encoded DER (pywebpush/py_vapid format)."""
-    import base64
-    der = bytes.fromhex(settings.vapid_private_key)
-    return base64.urlsafe_b64encode(der).rstrip(b"=").decode()
+    """Return VAPID private key as base64url string (pywebpush/py_vapid format).
+
+    settings.vapid_private_key is stored as raw base64url (standard VAPID
+    format from web-push-codelab). pywebpush/py_vapid accepts this format
+    natively, so we pass it through.
+    """
+    return settings.vapid_private_key
 
 
 def _get_vapid_public_key() -> str:
-    """Return VAPID public key as a raw base64url string (for the /notifications/public-key endpoint)."""
+    """Return VAPID public key as a raw base64url string (for the /notifications/public-key endpoint).
+
+    Derives the public key from the raw base64url-encoded EC private key
+    stored in settings.vapid_private_key.
+    """
     import base64
+    from cryptography.hazmat.primitives.asymmetric import ec
     from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-    from cryptography.hazmat.primitives import serialization
-    der = bytes.fromhex(settings.vapid_private_key)
-    key = serialization.load_der_private_key(der, password=None)
-    pub = key.public_key()
+
+    raw_private = base64.urlsafe_b64decode(settings.vapid_private_key + "==")
+    private_key = ec.derive_private_key(
+        int.from_bytes(raw_private, "big"),
+        ec.SECP256R1(),
+    )
+    pub = private_key.public_key()
     raw = pub.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
     return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
 
