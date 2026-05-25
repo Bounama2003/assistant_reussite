@@ -12,26 +12,52 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<SchoolStats | null>(null);
   const [extra, setExtra] = useState({ totalStudents: 0, totalProfessors: 0 });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!schoolId || !adminKey) return;
+    setError(null);
     const headers = { 'X-Admin-Key': adminKey };
     Promise.all([
-      api.get(`/stats/${schoolId}`, { headers }),
+      api.get(`/stats/${schoolId}`, { headers }).catch((err) => {
+        console.error('Stats fetch failed:', err);
+        return { data: null };
+      }),
       api.get(`/student/admin/${schoolId}/students`, { headers }).catch(() => ({ data: [] })),
       api.get(`/professors/professors-list/${schoolId}`, { headers }).catch(() => ({ data: [] })),
     ]).then(([statsRes, studentsRes, profsRes]) => {
-      setStats(statsRes.data);
+      if (statsRes.data) {
+        setStats(statsRes.data);
+      } else {
+        setError('Impossible de charger les statistiques. Vérifiez que la base de données est à jour.');
+      }
       setExtra({
         totalStudents: (studentsRes.data || []).length,
         totalProfessors: (profsRes.data || []).length,
       });
-    }).catch(() => {}).finally(() => setLoading(false));
+    }).catch((err) => {
+      console.error('Dashboard data load failed:', err);
+      setError('Erreur lors du chargement des données.');
+    }).finally(() => setLoading(false));
   }, [schoolId, adminKey]);
 
   if (loading) return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
       {[1,2,3,4,5,6].map((i) => <div key={i} className="skeleton h-24 sm:h-28 rounded-xl" />)}
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="w-14 h-14 rounded-2xl bg-danger/10 flex items-center justify-center mb-4">
+        <BarChart3 className="w-7 h-7 text-danger" />
+      </div>
+      <h2 className="text-lg font-semibold text-white mb-1">Données indisponibles</h2>
+      <p className="text-sm text-nuit-300 max-w-md mb-4">{error}</p>
+      <button onClick={() => window.location.reload()}
+        className="btn-primary text-sm">
+        Réessayer
+      </button>
     </div>
   );
 
