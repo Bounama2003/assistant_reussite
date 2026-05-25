@@ -4,6 +4,30 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator
 
 
+def _hf_space_allowed_origins() -> list[str]:
+    """Auto-detect Hugging Face Spaces and return allowed origin URLs.
+
+    HF Spaces set SPACE_ID (e.g. 'data-rag/assistant-reussite-api-dev').
+    From this we derive the Space's own URL and a pattern for the sibling
+    Spaces (UI dev/prod) that need CORS access to this API Space.
+    """
+    space_id = os.environ.get("SPACE_ID", "").strip()
+    if not space_id or "/" not in space_id:
+        return []
+    author, name = space_id.split("/", 1)
+    own_url = f"https://{author}-{name}.hf.space"
+    origins = [own_url]
+    if name.endswith("-api"):
+        base = name[:-4]
+        origins.append(f"https://{author}-{base}.hf.space")
+        origins.append(f"https://{author}-{base}-dev-ui.hf.space")
+    elif name.endswith("-api-dev"):
+        base = name[:-8]
+        origins.append(f"https://{author}-{base}-dev-ui.hf.space")
+        origins.append(f"https://{author}-{base}.hf.space")
+    return origins
+
+
 class Settings(BaseSettings):
     supabase_url: str
     supabase_service_key: str
@@ -20,6 +44,13 @@ class Settings(BaseSettings):
     # Web Push (VAPID) — must be set in .env (production requirement)
     vapid_public_key: str
     vapid_private_key: str
+
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        """Return allowed origins as a list, auto-adding Hugging Face Spaces."""
+        base = [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
+        base.extend(_hf_space_allowed_origins())
+        return base
 
     @field_validator("*", mode="before")
     @classmethod
