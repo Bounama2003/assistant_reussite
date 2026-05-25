@@ -38,7 +38,7 @@ const guideContent: Record<string, { title: string; icon: React.ElementType; sec
     icon: GraduationCap,
     sections: [
       { icon: Upload, title: 'Publier des cours', items: [
-        'Uploadez des documents PDF (cours, exercices, corrigés)',
+        'Importez des documents PDF (cours, exercices, corrigés)',
         'Les documents sont automatiquement indexés par l\'IA',
         'Les élèves peuvent poser des questions sur ces documents',
       ]},

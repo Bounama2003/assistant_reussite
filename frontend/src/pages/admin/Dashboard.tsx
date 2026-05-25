@@ -79,7 +79,7 @@ export default function AdminDashboard() {
           { label: 'Leads', desc: 'Inscriptions et conversions', path: '/admin/leads', icon: Users },
           { label: 'Élèves', desc: 'Gestion des comptes', path: '/admin/students', icon: UserCheck },
           { label: 'Professeurs', desc: 'Création et clés', path: '/admin/professors', icon: GraduationCap },
-          { label: 'Documents', desc: 'Upload et gestion', path: '/admin/documents', icon: FileText },
+          { label: 'Documents', desc: 'Import et gestion', path: '/admin/documents', icon: FileText },
           { label: 'Configuration', desc: 'Niveaux, classes, cours', path: '/admin/levels', icon: School },
         ].map((link, i) => (
           <motion.button key={link.label}

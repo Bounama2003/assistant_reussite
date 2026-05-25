@@ -56,14 +56,14 @@ export default function ProfessorDocuments() {
       await api.post('/professor/upload', formData, {
         headers: { 'X-Professor-Key': professorKey, 'Content-Type': 'multipart/form-data' },
       });
-      toast.success('Document uploadé');
+                    toast.success('Document importé');
       setShowUpload(false);
       setUploadFile(null);
       setUploadForm({ matiere: '', classes: [], annee_scolaire: '2025-2026', public: true });
       window.location.reload();
     } catch (err: any) {
       const detail = err.response?.data?.detail;
-      toast.error(typeof detail === 'string' ? detail : "Erreur lors de l'upload");
+              toast.error(typeof detail === 'string' ? detail : "Erreur lors de l'import");
     } finally { setUploading(false); }
   };
 
@@ -85,7 +85,7 @@ export default function ProfessorDocuments() {
         </div>
         <button onClick={() => setShowUpload(true)}
           className="bg-emeraude-500 text-nuit-900 font-semibold rounded-lg hover:bg-emeraude-400 transition-colors text-xs sm:text-sm py-2 px-3 sm:px-4 shrink-0 flex items-center gap-1">
-          <Upload size={14} /> <span className="hidden sm:inline">Uploader</span><span className="sm:hidden">+</span>
+          <Upload size={14} /> <span className="hidden sm:inline">Télécharger</span><span className="sm:hidden">+</span>
         </button>
       </div>
 
@@ -100,10 +100,10 @@ export default function ProfessorDocuments() {
             <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-emeraude-400" />
           </div>
           <h3 className="text-sm sm:text-base font-semibold text-white mb-1">Aucun document</h3>
-          <p className="text-xs sm:text-sm text-nuit-300 mb-4">Uploader vos documents PDF</p>
+          <p className="text-xs sm:text-sm text-nuit-300 mb-4">Importez vos documents PDF</p>
           <button onClick={() => setShowUpload(true)}
             className="bg-emeraude-500 text-nuit-900 font-semibold rounded-lg hover:bg-emeraude-400 transition-colors text-sm py-2 px-4 inline-flex items-center gap-1.5">
-            <Upload size={14} /> Uploader
+            <Upload size={14} /> Télécharger
           </button>
         </div>
       ) : (
@@ -140,7 +140,7 @@ export default function ProfessorDocuments() {
           <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             className="relative glass rounded-2xl p-5 sm:p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-5 sm:mb-6">Uploader un document</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-5 sm:mb-6">Télécharger un document</h2>
             <div className="space-y-3 sm:space-y-4">
               <div>
                 <label className="block text-xs sm:text-sm text-nuit-300 mb-1 sm:mb-1.5">Fichier PDF</label>
@@ -193,7 +193,7 @@ export default function ProfessorDocuments() {
                 <button onClick={handleUpload} disabled={uploading || !uploadFile || !uploadForm.matiere || uploadForm.classes.length === 0}
                   className="flex-1 px-4 py-2.5 sm:py-3 bg-emeraude-500 text-nuit-900 font-semibold rounded-xl hover:bg-emeraude-400 transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2"
                   title={!uploadFile ? 'Sélectionnez un fichier' : !uploadForm.matiere ? 'Sélectionnez une matière' : uploadForm.classes.length === 0 ? 'Sélectionnez au moins une classe' : ''}>
-                  {uploading && <Loader2 className="w-4 h-4 animate-spin" />} Uploader
+                  {uploading && <Loader2 className="w-4 h-4 animate-spin" />} Télécharger
                 </button>
               </div>
             </div>

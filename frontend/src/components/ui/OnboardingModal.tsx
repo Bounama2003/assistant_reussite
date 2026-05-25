@@ -17,7 +17,7 @@ const onboardingContent: Record<string, { title: string; icon: React.ElementType
     title: 'Espace Professeur',
     icon: GraduationCap,
     steps: [
-      { icon: Upload, title: 'Publiez vos cours', desc: 'Uploadez des documents PDF pour alimenter l\'IA avec votre contenu pédagogique.' },
+      { icon: Upload, title: 'Publiez vos cours', desc: 'Importez des documents PDF pour alimenter l\'IA avec votre contenu pédagogique.' },
       { icon: MessageSquare, title: 'Suivez les questions', desc: 'Consultez les questions posées par vos élèves et identifiez les difficultés.' },
       { icon: BarChart3, title: 'Analysez les statistiques', desc: 'Visualisez les performances et les sujets les plus demandés.' },
     ],
@@ -28,7 +28,7 @@ const onboardingContent: Record<string, { title: string; icon: React.ElementType
     steps: [
       { icon: Users, title: 'Gérez vos leads et élèves', desc: 'Convertissez les leads en élèves, gérez les comptes et les classes.' },
       { icon: GraduationCap, title: 'Gérez les professeurs', desc: 'Créez des comptes professeurs et assignez-leur des matières et classes.' },
-      { icon: Upload, title: 'Publiez des documents', desc: 'Uploadez les cours, programmes et exercices pour alimenter l\'IA.' },
+      { icon: Upload, title: 'Publiez des documents', desc: 'Importez les cours, programmes et exercices pour alimenter l\'IA.' },
     ],
   },
   superadmin: {
