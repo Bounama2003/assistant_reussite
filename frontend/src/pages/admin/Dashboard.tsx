@@ -17,14 +17,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!schoolId || !adminKey) return;
     setError(null);
+
+    const controller = new AbortController();
     const headers = { 'X-Admin-Key': adminKey };
+
     Promise.all([
-      api.get(`/stats/${schoolId}`, { headers }).catch((err) => {
-        console.error('Stats fetch failed:', err);
+      api.get(`/stats/${schoolId}`, { headers, signal: controller.signal }).catch((err) => {
+        if (err?.name !== 'CanceledError') console.error('Stats fetch failed:', err);
         return { data: null };
       }),
-      api.get(`/student/admin/${schoolId}/students`, { headers }).catch(() => ({ data: [] })),
-      api.get(`/professors/professors-list/${schoolId}`, { headers }).catch(() => ({ data: [] })),
+      api.get(`/student/admin/${schoolId}/students`, { headers, signal: controller.signal }).catch(() => ({ data: [] })),
+      api.get(`/professors/professors-list/${schoolId}`, { headers, signal: controller.signal }).catch(() => ({ data: [] })),
     ]).then(([statsRes, studentsRes, profsRes]) => {
       if (statsRes.data) {
         setStats(statsRes.data);
@@ -36,9 +39,13 @@ export default function AdminDashboard() {
         totalProfessors: (profsRes.data || []).length,
       });
     }).catch((err) => {
-      console.error('Dashboard data load failed:', err);
-      setError('Erreur lors du chargement des données.');
+      if (err?.name !== 'CanceledError') {
+        console.error('Dashboard data load failed:', err);
+        setError('Erreur lors du chargement des données.');
+      }
     }).finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, [schoolId, adminKey]);
 
   if (loading) return (
