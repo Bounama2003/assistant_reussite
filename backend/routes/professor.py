@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from utils.rate_limit import limiter
 from models.schemas import (
     ProfessorCreate, ProfessorLogin, ProfessorKeyLogin, ProfessorKeyResponse,
-    ProfessorRead, ReactionCreate, ReactionRead,
+    ProfessorRead, ProfessorUpdate, ReactionCreate, ReactionRead,
     ProfessorStatsRead, ProfessorDocumentStat, ProfessorQuestionSummary,
 )
 from services import professor_service
@@ -193,6 +193,58 @@ async def reset_professor_key(
     if not result:
         raise HTTPException(status_code=404, detail="Professeur non trouvé")
     return result
+
+
+@router_admin.put("/{professor_id}", response_model=ProfessorRead)
+async def update_professor(
+    professor_id: str,
+    data: ProfessorUpdate,
+    school_id: str = Query(...),
+    x_admin_key: str = Header(..., alias="X-Admin-Key"),
+):
+    from services.school_service import get_school_admin
+    school = get_school_admin(school_id)
+    if not school or school.admin_key != x_admin_key:
+        raise HTTPException(status_code=403, detail="Clé admin invalide")
+    try:
+        result = professor_service.update_professor(professor_id, data)
+        if not result:
+            raise HTTPException(status_code=404, detail="Professeur non trouvé")
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+
+@router_admin.post("/{professor_id}/toggle-active", response_model=ProfessorRead)
+async def toggle_professor_active(
+    professor_id: str,
+    school_id: str = Query(...),
+    x_admin_key: str = Header(..., alias="X-Admin-Key"),
+):
+    from services.school_service import get_school_admin
+    school = get_school_admin(school_id)
+    if not school or school.admin_key != x_admin_key:
+        raise HTTPException(status_code=403, detail="Clé admin invalide")
+    result = professor_service.toggle_professor_active(professor_id, school_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Professeur non trouvé")
+    return result
+
+
+@router_admin.delete("/{professor_id}")
+async def delete_professor(
+    professor_id: str,
+    school_id: str = Query(...),
+    x_admin_key: str = Header(..., alias="X-Admin-Key"),
+):
+    from services.school_service import get_school_admin
+    school = get_school_admin(school_id)
+    if not school or school.admin_key != x_admin_key:
+        raise HTTPException(status_code=403, detail="Clé admin invalide")
+    deleted = professor_service.delete_professor(professor_id, school_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Professeur non trouvé")
+    return {"detail": "Professeur supprimé"}
 
 
 class NotificationItem(BaseModel):

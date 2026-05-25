@@ -227,6 +227,22 @@ body {
   50% { opacity: 0.5; }
 }
 
+/* Thin scrollbar for sidebar - prevents Chrome/Edge scrollbar from deforming nav items */
+.sidebar-nav::-webkit-scrollbar {
+  width: 3px;
+}
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+.sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
 .page-container {
   max-width: 80rem;
   margin: 0 auto;

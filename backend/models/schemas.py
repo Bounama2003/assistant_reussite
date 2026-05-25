@@ -274,6 +274,13 @@ class ProfessorKeyResponse(BaseModel):
     name: str
 
 
+class ProfessorUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, min_length=9, max_length=20)
+    matieres: Optional[list[str]] = None
+    classes: Optional[list[str]] = None
+
+
 class ProfessorRead(BaseModel):
     id: str
     school_id: str

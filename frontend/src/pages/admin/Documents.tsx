@@ -18,6 +18,7 @@ export default function AdminDocuments() {
   const [uploading, setUploading] = useState(false);
   const [editingFile, setEditingFile] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ matiere: '', classe: '', professeur: '' });
+  const [saving, setSaving] = useState(false);
   const [courses, setCourses] = useState<SchoolCourse[]>([]);
   const [classes, setClasses] = useState<SchoolClass[]>([]);
   const [professors, setProfessors] = useState<Professor[]>([]);
@@ -60,10 +61,12 @@ export default function AdminDocuments() {
   };
 
   const handleEdit = async (filename: string) => {
+    setSaving(true);
     try {
       await api.put('/documents/metadata', null, { params: { school_id: schoolId, filename, ...editForm }, headers: { 'X-Admin-Key': adminKey } });
       setEditingFile(null); load(); toast.success('Métadonnées mises à jour');
     } catch (err: any) { toast.error(err.response?.data?.detail || 'Erreur'); }
+    finally { setSaving(false); }
   };
 
   const filtered = documents.filter((d) =>
@@ -118,24 +121,44 @@ export default function AdminDocuments() {
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <p className="text-xs text-nuit-400 mb-0.5">Matière</p>
-                      <input type="text" value={editForm.matiere} onChange={(e) => setEditForm({ ...editForm, matiere: e.target.value })}
-                        className="w-full px-3 py-2 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all" />
+                      <select value={editForm.matiere} onChange={(e) => setEditForm({ ...editForm, matiere: e.target.value, professeur: '' })} disabled={saving}
+                        className="w-full px-3 py-2 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all disabled:opacity-50">
+                        <option value="">Sélectionnez...</option>
+                        {courses.map((c) => (<option key={c.id} value={c.nom_cours}>{c.nom_cours}{c.libelle ? ` (${c.libelle})` : ''}</option>))}
+                      </select>
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-nuit-400 mb-0.5">Classe</p>
-                      <input type="text" value={editForm.classe} onChange={(e) => setEditForm({ ...editForm, classe: e.target.value })}
-                        className="w-full px-3 py-2 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all" />
+                      <select value={editForm.classe} onChange={(e) => setEditForm({ ...editForm, classe: e.target.value, professeur: '' })} disabled={saving}
+                        className="w-full px-3 py-2 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all disabled:opacity-50">
+                        <option value="">Sélectionnez...</option>
+                        {classes.map((c) => (<option key={c.id} value={c.nom_classe}>{c.nom_classe}</option>))}
+                      </select>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <p className="text-xs text-nuit-400 mb-0.5">Professeur</p>
-                      <input type="text" value={editForm.professeur} onChange={(e) => setEditForm({ ...editForm, professeur: e.target.value })}
-                        className="w-full px-3 py-2 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all" />
+                      <select value={editForm.professeur} onChange={(e) => setEditForm({ ...editForm, professeur: e.target.value })} disabled={saving}
+                        className="w-full px-3 py-2 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all disabled:opacity-50">
+                        <option value="">Aucun</option>
+                        {professors.filter((p) => {
+                          if (!p.is_active) return false;
+                          if (editForm.matiere && p.matieres.length > 0 && !p.matieres.includes(editForm.matiere)) return false;
+                          if (editForm.classe && p.classes.length > 0 && !p.classes.includes(editForm.classe)) return false;
+                          return true;
+                        }).map((p) => (<option key={p.id} value={p.name}>{p.name}{p.matieres.length ? ` — ${p.matieres.join(', ')}` : ''}</option>))}
+                      </select>
                     </div>
                     <div className="flex items-end gap-1 pb-0.5">
-                      <button onClick={() => handleEdit(doc.filename)} className="p-2 rounded-lg hover:bg-emeraude-500/10 text-emeraude-400"><Check size={16} /></button>
-                      <button onClick={() => setEditingFile(null)} className="p-2 rounded-lg hover:bg-danger/10 text-danger"><X size={16} /></button>
+                      <button onClick={() => handleEdit(doc.filename)} disabled={saving}
+                        className="p-2 rounded-lg hover:bg-emeraude-500/10 text-emeraude-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                      </button>
+                      <button onClick={() => !saving && setEditingFile(null)} disabled={saving}
+                        className="p-2 rounded-lg hover:bg-danger/10 text-danger disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        <X size={16} />
+                      </button>
                     </div>
                   </div>
                 </div>

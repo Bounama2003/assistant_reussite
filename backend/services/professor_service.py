@@ -6,7 +6,7 @@ import bcrypt
 from typing import Optional
 from config.database import get_supabase_client
 from models.schemas import (
-    ProfessorCreate, ProfessorRead, ProfessorLogin,
+    ProfessorCreate, ProfessorRead, ProfessorUpdate, ProfessorLogin,
     ReactionCreate, ReactionRead,
     ProfessorStatsRead, ProfessorDocumentStat, ProfessorQuestionSummary,
 )
@@ -498,6 +498,49 @@ def get_professor_difficulties(professor_id: str, school_id: str) -> list[dict]:
 
     results.sort(key=lambda x: x["avg_score"])
     return results
+
+
+def update_professor(professor_id: str, data: ProfessorUpdate) -> ProfessorRead | None:
+    supabase = get_supabase_client()
+
+    update_data: dict = {}
+    if data.name is not None:
+        update_data["name"] = data.name
+    if data.phone is not None:
+        existing = supabase.table("professeurs").select("id").eq("phone", data.phone).neq("id", professor_id).execute()
+        if existing.data:
+            raise ValueError("Un professeur avec ce numéro existe déjà")
+        update_data["phone"] = data.phone
+    if data.matieres is not None:
+        update_data["matieres"] = data.matieres
+    if data.classes is not None:
+        update_data["classes"] = data.classes
+
+    if not update_data:
+        return get_professor(professor_id)
+
+    result = supabase.table("professeurs").update(update_data).eq("id", professor_id).execute()
+    if not result.data:
+        return None
+    return _row_to_professor(result.data[0])
+
+
+def toggle_professor_active(professor_id: str, school_id: str) -> ProfessorRead | None:
+    supabase = get_supabase_client()
+    prof = get_professor(professor_id)
+    if not prof:
+        return None
+    new_status = not prof.is_active
+    result = supabase.table("professeurs").update({"is_active": new_status}).eq("id", professor_id).eq("school_id", school_id).execute()
+    if not result.data:
+        return None
+    return _row_to_professor(result.data[0])
+
+
+def delete_professor(professor_id: str, school_id: str) -> bool:
+    supabase = get_supabase_client()
+    result = supabase.table("professeurs").delete().eq("id", professor_id).eq("school_id", school_id).execute()
+    return len(result.data) > 0
 
 
 def get_notifications(professor_id: str, school_id: str, limit: int = 10) -> list[dict]:

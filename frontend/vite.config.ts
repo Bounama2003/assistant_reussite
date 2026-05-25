@@ -24,9 +24,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: "Assistant Réussite - Tutorat IA",
-        short_name: "Assistant Réussite",
-        description: "Plateforme de tutorat IA multi-école pour la réussite scolaire",
+        name: "Tutorat IA",
+        short_name: "Tutorat IA",
+        description: "Assistant pédagogique IA pour la réussite scolaire",
         theme_color: "#020617",
         background_color: "#020617",
         display: "standalone",

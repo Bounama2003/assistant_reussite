@@ -108,7 +108,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+      <nav className="sidebar-nav flex-1 overflow-y-auto p-3 space-y-1">
         {filteredItems.map((item) => (
           <NavLink
             key={item.path}

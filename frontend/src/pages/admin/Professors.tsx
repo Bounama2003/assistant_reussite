@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Plus, Search, Key, UserCheck, Loader2, Copy, Check, Eye } from 'lucide-react';
+import { BookOpen, Plus, Search, Key, UserCheck, Loader2, Copy, Check, Eye, Pencil, Trash2, Power, PowerOff, AlertTriangle } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import api from '@/services/api';
 import type { Professor, SchoolCourse, SchoolClass } from '@/types';
@@ -21,6 +21,12 @@ export default function AdminProfessors() {
   const [creating, setCreating] = useState(false);
   const [newKey, setNewKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [editingProfessor, setEditingProfessor] = useState<Professor | null>(null);
+  const [editForm, setEditForm] = useState({ name: '', phone: '', matieres: [] as string[], classes: [] as string[] });
+  const [saving, setSaving] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     if (!schoolId || !adminKey) return;
@@ -59,6 +65,57 @@ export default function AdminProfessors() {
   };
 
   const copyKey = () => { if (newKey) { navigator.clipboard.writeText(newKey); setCopied(true); setTimeout(() => setCopied(false), 2000); } };
+
+  const handleEdit = (p: Professor) => {
+    setEditingProfessor(p);
+    setEditForm({ name: p.name, phone: p.phone, matieres: [...(p.matieres || [])], classes: [...(p.classes || [])] });
+  };
+
+  const handleUpdate = async () => {
+    if (!adminKey || !editingProfessor) return;
+    setSaving(true);
+    try {
+      const res = await api.put<Professor>(`/professors/${editingProfessor.id}`, {
+        name: editForm.name,
+        phone: editForm.phone,
+        matieres: editForm.matieres,
+        classes: editForm.classes,
+      }, { params: { school_id: schoolId }, headers: { 'X-Admin-Key': adminKey } });
+      setProfessors((prev) => prev.map((p) => p.id === editingProfessor.id ? res.data : p));
+      setEditingProfessor(null);
+      toast.success('Professeur modifié');
+    } catch (err: any) { toast.error(err.response?.data?.detail || 'Erreur'); }
+    finally { setSaving(false); }
+  };
+
+  const handleToggleActive = async (p: Professor) => {
+    if (!adminKey) return;
+    setTogglingId(p.id);
+    try {
+      const res = await api.post<Professor>(`/professors/${p.id}/toggle-active`, null, {
+        params: { school_id: schoolId },
+        headers: { 'X-Admin-Key': adminKey },
+      });
+      setProfessors((prev) => prev.map((prof) => prof.id === p.id ? res.data : prof));
+      toast.success(res.data.is_active ? 'Professeur activé' : 'Professeur suspendu');
+    } catch (err: any) { toast.error(err.response?.data?.detail || 'Erreur'); }
+    finally { setTogglingId(null); }
+  };
+
+  const handleDelete = async () => {
+    if (!adminKey || !confirmDeleteId) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/professors/${confirmDeleteId}`, {
+        params: { school_id: schoolId },
+        headers: { 'X-Admin-Key': adminKey },
+      });
+      setProfessors((prev) => prev.filter((p) => p.id !== confirmDeleteId));
+      setConfirmDeleteId(null);
+      toast.success('Professeur supprimé');
+    } catch (err: any) { toast.error(err.response?.data?.detail || 'Erreur'); }
+    finally { setDeleting(false); }
+  };
 
   const filtered = professors.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
 
@@ -124,6 +181,21 @@ export default function AdminProfessors() {
                 <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                   <button onClick={() => setDetailProfessor(p)} className="p-1.5 sm:p-2 rounded-lg hover:bg-white/5 text-nuit-400 hover:text-white transition-all" title="Détails">
                     <Eye size={14} className="sm:w-4" />
+                  </button>
+                  <button onClick={() => handleEdit(p)} className="p-1.5 sm:p-2 rounded-lg hover:bg-blue-500/10 text-blue-400 transition-all" title="Modifier">
+                    <Pencil size={14} className="sm:w-4" />
+                  </button>
+                  <button onClick={() => handleToggleActive(p)} disabled={togglingId === p.id}
+                    className={`p-1.5 sm:p-2 rounded-lg transition-all disabled:opacity-40 ${
+                      p.is_active
+                        ? 'hover:bg-orange-500/10 text-orange-400'
+                        : 'hover:bg-emeraude-500/10 text-emeraude-400'
+                    }`}
+                    title={p.is_active ? 'Suspendre' : 'Activer'}>
+                    {togglingId === p.id ? <Loader2 size={14} className="sm:w-4 animate-spin" /> : p.is_active ? <PowerOff size={14} className="sm:w-4" /> : <Power size={14} className="sm:w-4" />}
+                  </button>
+                  <button onClick={() => setConfirmDeleteId(p.id)} className="p-1.5 sm:p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-all" title="Supprimer">
+                    <Trash2 size={14} className="sm:w-4" />
                   </button>
                   <button onClick={() => handleResetKey(p.id)} className="p-1.5 sm:p-2 rounded-lg hover:bg-emeraude-500/10 text-emeraude-400 transition-all" title="Nouvelle clé">
                     <Key size={14} className="sm:w-4" />
@@ -192,6 +264,72 @@ export default function AdminProfessors() {
               </button>
             </div>
             <button onClick={() => setNewKey(null)} className="w-full bg-emeraude-500 text-nuit-900 font-semibold rounded-xl hover:bg-emeraude-400 transition-colors py-2.5 text-sm">Fermer</button>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Edit modal */}
+      {editingProfessor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setEditingProfessor(null)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            className="relative glass rounded-2xl p-5 sm:p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-base sm:text-xl font-bold text-white mb-5 sm:mb-6">Modifier le professeur</h2>
+            <div className="space-y-3 sm:space-y-4">
+              <div>
+                <label className="block text-xs sm:text-sm text-nuit-300 mb-1 sm:mb-1.5">Nom</label>
+                <input type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="w-full px-4 py-2.5 sm:py-3 bg-nuit-800 border border-nuit-500 rounded-xl text-white text-sm focus:outline-none focus:border-emeraude-500 transition-all" required />
+              </div>
+              <div>
+                <label className="block text-xs sm:text-sm text-nuit-300 mb-1 sm:mb-1.5">Téléphone</label>
+                <input type="tel" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                  className="w-full px-4 py-2.5 sm:py-3 bg-nuit-800 border border-nuit-500 rounded-xl text-white placeholder-nuit-400 text-sm focus:outline-none focus:border-emeraude-500 transition-all" required />
+              </div>
+              <MultiSelect label="Matières"
+                options={courses.map((c) => ({ value: c.nom_cours, label: c.libelle ? `${c.nom_cours} (${c.libelle})` : c.nom_cours }))}
+                selected={editForm.matieres} onChange={(v) => setEditForm({ ...editForm, matieres: v })}
+                placeholder="Sélectionnez..." />
+              <MultiSelect label="Classes"
+                options={classes.map((c) => ({ value: c.nom_classe, label: c.nom_classe }))}
+                selected={editForm.classes} onChange={(v) => setEditForm({ ...editForm, classes: v })}
+                placeholder="Sélectionnez..." />
+              <div className="flex gap-3 pt-1 sm:pt-2">
+                <button onClick={() => setEditingProfessor(null)} className="flex-1 px-4 py-2.5 bg-white/5 text-white rounded-xl hover:bg-white/10 transition-colors text-sm">Annuler</button>
+                <button onClick={handleUpdate} disabled={saving}
+                  className="flex-1 px-4 py-2.5 bg-emeraude-500 text-nuit-900 font-semibold rounded-xl hover:bg-emeraude-400 transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2">
+                  {saving && <Loader2 className="w-4 h-4 animate-spin" />} Enregistrer
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete confirmation */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setConfirmDeleteId(null)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            className="relative glass rounded-2xl p-5 sm:p-8 max-w-sm w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white">Confirmer la suppression</h2>
+                <p className="text-xs sm:text-sm text-nuit-300">Cette action est irréversible.</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmDeleteId(null)} className="flex-1 px-4 py-2.5 bg-white/5 text-white rounded-xl hover:bg-white/10 transition-colors text-sm">Annuler</button>
+              <button onClick={handleDelete} disabled={deleting}
+                className="flex-1 px-4 py-2.5 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-400 transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2">
+                {deleting && <Loader2 className="w-4 h-4 animate-spin" />} Supprimer
+              </button>
+            </div>
           </motion.div>
         </div>
       )}

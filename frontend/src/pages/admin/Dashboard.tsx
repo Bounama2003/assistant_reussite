@@ -20,6 +20,7 @@ export default function AdminDashboard() {
 
     const controller = new AbortController();
     const headers = { 'X-Admin-Key': adminKey };
+    let cancelled = false;
 
     Promise.all([
       api.get(`/stats/${schoolId}`, { headers, signal: controller.signal }).catch((err) => {
@@ -29,6 +30,7 @@ export default function AdminDashboard() {
       api.get(`/student/admin/${schoolId}/students`, { headers, signal: controller.signal }).catch(() => ({ data: [] })),
       api.get(`/professors/professors-list/${schoolId}`, { headers, signal: controller.signal }).catch(() => ({ data: [] })),
     ]).then(([statsRes, studentsRes, profsRes]) => {
+      if (cancelled) return;
       if (statsRes.data) {
         setStats(statsRes.data);
       } else {
@@ -39,13 +41,16 @@ export default function AdminDashboard() {
         totalProfessors: (profsRes.data || []).length,
       });
     }).catch((err) => {
+      if (cancelled) return;
       if (err?.name !== 'CanceledError') {
         console.error('Dashboard data load failed:', err);
         setError('Erreur lors du chargement des données.');
       }
-    }).finally(() => setLoading(false));
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
 
-    return () => controller.abort();
+    return () => { cancelled = true; controller.abort(); };
   }, [schoolId, adminKey]);
 
   if (loading) return (

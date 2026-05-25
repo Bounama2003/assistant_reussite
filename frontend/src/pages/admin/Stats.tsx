@@ -126,7 +126,7 @@ export default function AdminStats() {
       {/* Charts row 2 */}
       <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="glass rounded-xl p-4 sm:p-5 overflow-hidden">
-          <h3 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4">Activité</h3>
+          <h3 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4">Messages échangés par jour</h3>
           {messagesByDayData.length > 0 ? (
             <div className="w-full" style={{ minHeight: 180, height: 180 }}>
               <ResponsiveContainer width="100%" height={180}>
@@ -144,7 +144,7 @@ export default function AdminStats() {
 
         <div className="glass rounded-xl p-4 sm:p-5 overflow-hidden">
           <h3 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emeraude-400" /> Heatmap
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emeraude-400" /> Messages par jour et heure
           </h3>
           {Object.keys(rawHeatmap).length > 0 ? (
             <>
