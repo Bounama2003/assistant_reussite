@@ -67,7 +67,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
-    allow_origin_regex=r"https://.*\.hf\.space",
+    allow_origin_regex=r"https://.*\.(hf\.space|vercel\.app)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -100,7 +100,7 @@ async def csrf_middleware(request: Request, call_next):
                 if origin_netloc == a_netloc:
                     is_allowed = True
                     break
-            if not is_allowed and not any(domain in origin_netloc for domain in ["localhost", "127.0.0.1", "0.0.0.0"]) and not origin_netloc.endswith(".hf.space"):
+            if not is_allowed and not any(domain in origin_netloc for domain in ["localhost", "127.0.0.1", "0.0.0.0"])         and not origin_netloc.endswith(".hf.space") and not origin_netloc.endswith(".vercel.app"):
                 return JSONResponse(
                     status_code=403,
                     content={"detail": "Origine non autorisée"},
