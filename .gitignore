@@ -54,6 +54,7 @@ skills/
 # OpenCode
 .opencode/
 .sisyphus/
+instructions.md
 
 # Frontend build
 frontend/dist/
