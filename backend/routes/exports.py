@@ -174,7 +174,7 @@ def export_leads_excel(school_id: str, admin_key: str = Depends(_require_admin_k
     _verify_school_admin(school_id, admin_key)
     
     supabase = get_supabase_client()
-    leads = supabase.table("leads").select("*").eq("school_id", school_id).order("created_at", desc=True).execute()
+    leads = supabase.table("leads").select("*").eq("school_id", school_id).eq("converted", False).order("created_at", desc=True).execute()
     
     wb = Workbook()
     ws = wb.active
@@ -206,7 +206,7 @@ def export_leads_pdf(school_id: str, admin_key: str = Depends(_require_admin_key
     school = _verify_school_admin(school_id, admin_key)
     
     supabase = get_supabase_client()
-    leads = supabase.table("leads").select("*").eq("school_id", school_id).order("created_at", desc=True).execute()
+    leads = supabase.table("leads").select("*").eq("school_id", school_id).eq("converted", False).order("created_at", desc=True).execute()
     
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=LETTER, rightMargin=0.5*inch, leftMargin=0.5*inch, topMargin=0.5*inch, bottomMargin=0.5*inch)
