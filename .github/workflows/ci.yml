@@ -83,6 +83,24 @@ jobs:
 
       - name: Deploy to HF Spaces
         run: |
+          retry_push() {
+            local remote="$1"
+            local url="$2"
+            local max_attempts=5
+            local attempt=1
+            local delay=15
+            until git push "$remote" HEAD:main --force; do
+              echo "Push to $url failed (attempt $attempt/$max_attempts). Retrying in ${delay}s..."
+              sleep "$delay"
+              attempt=$((attempt + 1))
+              delay=$((delay * 2))
+              if [ "$attempt" -gt "$max_attempts" ]; then
+                echo "FATAL: Failed to push to $url after $max_attempts attempts"
+                exit 1
+              fi
+            done
+          }
+
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             API_REPO="data-rag/assistant-reussite-api"
             UI_REPO="data-rag/assistant-reussite.ai"
@@ -91,8 +109,11 @@ jobs:
             UI_REPO="data-rag/assistant-reussite-dev-ui"
           fi
 
-          git remote add hf-api "https://data-rag:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${API_REPO}"
-          git remote add hf-ui "https://data-rag:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${UI_REPO}"
+          HF_AUTH="https://data-rag:${{ secrets.HF_TOKEN }}@huggingface.co/spaces"
 
-          git push hf-api HEAD:main --force
-          git push hf-ui HEAD:main --force
+          git remote add hf-api "${HF_AUTH}/${API_REPO}"
+          git remote add hf-ui "${HF_AUTH}/${UI_REPO}"
+
+          retry_push hf-api "${API_REPO}" &
+          retry_push hf-ui "${UI_REPO}" &
+          wait
